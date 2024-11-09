@@ -1,0 +1,62 @@
+#Yordi Sanchez, 21-0834
+import csv
+
+def cproductos(archivo):
+    productos = []
+    try:
+        with open(archivo, mode='r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                # Convertir el precio y porcentaje de descuento a float
+                row['precio'] = float(row['precio'])
+                row['porcentaje_descuento'] = float(row['porcentaje_descuento'])
+                productos.append(row)
+        print("Datos cargados exitosamente.")
+    except FileNotFoundError:
+        print("Error: El archivo no se encontro.")
+    except ValueError:
+        print("Error: El archivo contiene datos no validos.")
+    except Exception as e:
+        print(f"Ocurrio un error al leer el archivo: {e}")
+    return productos
+
+def cpromedio(productos):
+    precios = [producto['precio'] for producto in productos]
+    return sum(precios) / len(precios) if precios else 0
+
+def adescuento(productos):
+    for producto in productos:
+        # Calcular el precio con descuento usando el porcentaje especifico de cada producto
+        descuento = producto['precio'] * (producto['porcentaje_descuento'] / 100)
+        producto['predescuento'] = producto['precio'] - descuento
+    return productos
+
+def mostrarproductos(productos):
+    print("TIENDA PY-MARKET".center(60, "="))
+    print(f"{'Producto':<20} {'Precio':<10} {'Descuento(%)':<15} {'Precio Final':<15}")
+    print("-" * 60)
+    for producto in productos:
+        nombre = producto['nombre_producto']
+        precio = f"${producto['precio']:.2f}"
+        descuento = f"{producto['porcentaje_descuento']}%"
+        precio_final = f"${producto['predescuento']:.2f}"
+        print(f"{nombre:<20} {precio:<10} {descuento:<15} {precio_final:<15}")
+    print("=" * 60)
+
+# Ruta al archivo de productos
+archivo = 'productos.csv'
+
+# Cargar productos
+productos = cproductos(archivo)
+
+# Verificar si se cargaron los productos correctamente
+if productos:
+    # Calcular el precio promedio
+    precio_promedio = cpromedio(productos)
+    print(f"El precio promedio de los productos es: ${precio_promedio:.2f}\n")
+
+    # Aplicar descuentos especificos de cada producto y mostrar resultados
+    productos_con_descuento = adescuento(productos)
+    mostrarproductos(productos_con_descuento)
+else:
+    print("No se pudo cargar la lista de productos.")
