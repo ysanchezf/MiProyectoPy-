@@ -1,3 +1,5 @@
+#Yordi Sanchez, 21-0834
+
 # Importar librerías necesarias
 import pandas as pd
 import numpy as np
